@@ -81,29 +81,33 @@ export default function StudentPage() {
     const absentList = [...absentStudents].sort((a, b) => a.name.localeCompare(b.name));
     const prpList = [...prpStudents].sort((a, b) => a.name.localeCompare(b.name));
 
+    // Format date as dd-mm-yyyy
+    const [yyyy, mm, dd] = date.split('-');
+    const formattedDate = `${dd}-${mm}-${yyyy}`;
+
     // Construct the WhatsApp text block
     const reportText = `📘 *BCR 306 Session Report* 📘
 
 📌 *Group Number:* Group ${selectedGroup}
-📅 *Date:* ${date}
+📅 *Date:* ${formattedDate}
 👨‍🏫 *Trainer Name:* ${trainer}
 🧑‍🤝‍🧑 *Coordinators:* ${coordinators}
+✍️ *Prepared By:* ${preparedBy}
 
 📝 *Session Overview:*
 ${overview}
 
-${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}\n` : ''}
 ───────────────
 ✅ *Present:*
-${presentList.length > 0 ? presentList.map((s, i) => `${i + 1}. ${s.name} (${s.domain})`).join('\n') : 'None'}
+${presentList.length > 0 ? presentList.map((s, i) => `${i + 1}. ${s.name}`).join('\n') : 'None'}
 
 ❌ *Absent:*
-${absentList.length > 0 ? absentList.map((s, i) => `${i + 1}. ${s.name} (${s.domain})`).join('\n') : 'None'}
+${absentList.length > 0 ? absentList.map((s, i) => `${i + 1}. ${s.name}`).join('\n') : 'None'}
 
-⚪ *N/A (PRP):*
+⚪ *N/A:*
 ${prpList.length > 0 ? prpList.map((s, i) => `${i + 1}. ${s.name}`).join('\n') : 'None'}
 ───────────────
-🤝 *Prepared By:* ${preparedBy}
+${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
 `;
 
     setReportOutput(reportText);
