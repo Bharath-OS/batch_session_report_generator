@@ -142,8 +142,10 @@ export default function AdminDashboard() {
                                 <option value="MEAN">MEAN</option>
                                 <option value="Django">Django</option>
                                 <option value="Data Science">Data Science</option>
-                                <option value="UI/UX">UI/UX</option>
                                 <option value="Cyber Security">Cyber Security</option>
+                                <option value="Java Spring Boot">Java Spring Boot</option>
+                                <option value="Machine Learning">Machine Learning</option>
+                                <option value="Game Development">Game Development</option>
                             </Select>
                         </div>
                         <div>
