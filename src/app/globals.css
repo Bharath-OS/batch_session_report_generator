@@ -2,26 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-primary-light selection:text-primary-dark;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-dark transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-white border border-secondary/20 text-secondary-dark px-4 py-2 rounded-lg font-medium hover:bg-secondary-light transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
+  }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .input-field {
+    @apply w-full border border-secondary/20 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors;
+  }
+  
+  .label-text {
+    @apply block text-sm font-medium text-secondary-dark mb-1;
+  }
+
+  .card-container {
+    @apply bg-white rounded-2xl shadow-soft p-6 border border-secondary-light;
   }
 }
