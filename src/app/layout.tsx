@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} font-sans bg-background text-foreground min-h-screen flex flex-col`}>
         <Header />
-        <main className="flex-1 w-full max-w-[800px] mx-auto px-4 py-8">
+        <main className="flex-1 w-full max-w-[1100px] mx-auto px-4 py-8">
           {children}
         </main>
       </body>
