@@ -38,7 +38,7 @@ export default function StudentPage() {
   // Filter students based on group
   const groupStudents = students.filter(s => s.groupNumber === selectedGroup);
   const activeStudents = groupStudents.filter(s => s.status === 'Active');
-  const prpStudents = groupStudents.filter(s => s.status === 'PRP');
+  const naStudents = groupStudents.filter(s => s.status === 'N/A');
 
   // Reset attendance when group changes
   useEffect(() => {
@@ -78,7 +78,7 @@ export default function StudentPage() {
 
     const presentList = [...presentStudents].sort((a, b) => a.name.localeCompare(b.name));
     const absentList = [...absentStudents].sort((a, b) => a.name.localeCompare(b.name));
-    const prpList = [...prpStudents].sort((a, b) => a.name.localeCompare(b.name));
+    const naList = [...naStudents].sort((a, b) => a.name.localeCompare(b.name));
 
     const [yyyy, mm, dd] = date.split('-');
     const formattedDate = `${dd}-${mm}-${yyyy}`;
@@ -102,7 +102,7 @@ ${presentList.length > 0 ? presentList.map((s, i) => `${i + 1}. ${s.name}`).join
 ${absentList.length > 0 ? absentList.map((s, i) => `${i + 1}. ${s.name}`).join('\n') : 'None'}
 
 ⚪ *N/A:*
-${prpList.length > 0 ? prpList.map((s, i) => `${i + 1}. ${s.name}`).join('\n') : 'None'}
+${naList.length > 0 ? naList.map((s, i) => `${i + 1}. ${s.name}`).join('\n') : 'None'}
 ───────────────
 ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
 `;
@@ -287,7 +287,7 @@ ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
                 <li
                   key={student.id}
                   onClick={() => toggleAttendance(student.id)}
-                  className="cursor-pointer bg-white px-3 py-2 rounded-lg text-sm text-foreground shadow-sm hover:shadow-md border border-transparent hover:border-danger-light transition-all select-none truncate"
+                  className={`cursor-pointer bg-white px-3 py-2 rounded-lg text-sm text-foreground shadow-sm hover:shadow-md border border-transparent hover:border-danger-light transition-all select-none truncate`}
                   title={student.name}
                 >
                   {student.name}
@@ -300,12 +300,12 @@ ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
           </div>
         </div>
 
-        {/* PRP Section */}
-        {prpStudents.length > 0 && (
+        {/* N/A Section */}
+        {naStudents.length > 0 && (
           <div className="mt-4 bg-secondary-light/30 rounded-xl p-3 border border-secondary-light">
-            <h3 className="font-semibold text-secondary-dark mb-2 text-xs uppercase tracking-wider">N/A — PRP / Not Active</h3>
+            <h3 className="font-semibold text-secondary-dark mb-2 text-xs uppercase tracking-wider">N/A — Not Active</h3>
             <div className="flex flex-wrap gap-2">
-              {prpStudents.map(student => (
+              {naStudents.map(student => (
                 <span key={student.id} className="text-xs bg-white text-secondary-dark px-2.5 py-1 rounded-lg border border-secondary-light shadow-sm">
                   {student.name}
                 </span>
@@ -326,7 +326,7 @@ ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
           <p className="text-sm text-secondary-dark text-center">
             Review your formatted report below and click Copy to send it in WhatsApp.
           </p>
-          <div className="bg-secondary-light/30 rounded-xl p-4 border border-secondary-light max-h-[50vh] overflow-y-auto whitespace-pre-wrap font-mono text-xs text-foreground leading-relaxed">
+          <div className="bg-secondary-light/30 rounded-xl p-4 border border-secondary-light max-h-[50vh] overflow-y-auto whitespace-pre-wrap font-sans text-sm text-foreground leading-relaxed">
             {reportOutput}
           </div>
           <Button

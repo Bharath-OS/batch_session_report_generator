@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input, Button, Label } from '@/components/FormElements';
 
-// @ts-ignore
 import { ADMIN_CONFIG } from '@/../app-config';
 
 export default function AdminLogin() {

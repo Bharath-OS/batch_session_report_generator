@@ -1,8 +1,8 @@
 const API_URL = '/api/sheets';
 
-export type StudentStatus = 'Active' | 'PRP';
+export type StudentStatus = 'Active' | 'N/A';
 export type GroupNumber = '1' | '2' | '3';
-export type Domain = 'Flutter' | 'MERN' | 'MEAN' | 'Django' | 'Data Science' | 'UI/UX' | 'Cyber Security';
+export type Domain = 'Flutter' | 'MERN' | 'MEAN' | 'Django' | 'Data Science' | 'Cyber Security' | 'Java Spring Boot' | 'Machine Learning' | 'Game Development' | 'DevOps';
 
 export interface Student {
     id: string; // Map from 'Timestamp'
@@ -14,7 +14,7 @@ export interface Student {
 }
 
 // Map Sheet headers to our Student interface
-function mapRowToStudent(row: any): Student {
+function mapRowToStudent(row: Record<string, unknown>): Student {
     return {
         id: String(row['Timestamp'] || ''),
         name: String(row['Name'] || ''),
@@ -35,22 +35,22 @@ export async function getStudents(): Promise<Student[]> {
             let errorMessage = `Server Error (${response.status})`;
             try {
                 if (contentType && contentType.includes('application/json')) {
-                    const errorData = await response.json();
+                    const errorData = (await response.json()) as { error?: string };
                     console.error('Server Error Details:', errorData);
                     errorMessage = errorData.error || errorMessage;
                 } else {
                     const text = await response.text();
                     console.error('Server Error (HTML/Text):', text.substring(0, 500));
                 }
-            } catch (e) {
+            } catch {
                 console.error('Failed to parse error response');
             }
             throw new Error(errorMessage);
         }
 
         if (contentType && contentType.includes('application/json')) {
-            const data = await response.json();
-            return Array.isArray(data) ? data.map(mapRowToStudent) : [];
+            const data: unknown = await response.json();
+            return Array.isArray(data) ? data.map(row => mapRowToStudent(row as Record<string, unknown>)) : [];
         } else {
             const text = await response.text();
             console.error('Expected JSON but got:', text.substring(0, 500));
@@ -81,8 +81,6 @@ export async function addStudent(student: Omit<Student, 'id'>): Promise<Student>
 
     if (!response.ok) throw new Error('Failed to add student');
 
-    // Since add doesn't return the new object with timestamp, we might need to re-fetch
-    // Or we can just return a temporary object. But let's assume we re-fetch in the UI.
     return { ...student, id: new Date().toISOString() };
 }
 
@@ -107,16 +105,15 @@ export async function updateStudent(id: string, updates: Partial<Student>): Prom
 
         if (!response.ok) return null;
 
-        const result = await response.json();
-        // The proxy returns { message: "...", sentBody: ... }
+        const result = (await response.json()) as { message: string };
         if (result.message !== 'Success') {
             console.error('Update failed:', result.message);
             return null;
         }
 
         return { id, ...updates } as Student;
-    } catch (e) {
-        console.error('Update error:', e);
+    } catch {
+        console.error('Update error');
         return null;
     }
 }

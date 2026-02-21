@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-// @ts-ignore
 import { GOOGLE_SHEET_URL } from '../../../../app-config';
 
 export async function GET() {
@@ -14,7 +13,6 @@ export async function GET() {
 
         console.log('Google Script Response Status:', response.status);
 
-        const contentType = response.headers.get('content-type');
         const text = await response.text();
 
         if (!response.ok) {
@@ -28,17 +26,18 @@ export async function GET() {
         try {
             const data = JSON.parse(text);
             return NextResponse.json(data);
-        } catch (e) {
+        } catch {
             console.error('Failed to parse Google Script response as JSON:', text);
             return NextResponse.json({
                 error: 'Invalid JSON from Google Script',
                 details: text.substring(0, 500)
             }, { status: 500 });
         }
-    } catch (error: any) {
-        console.error('Proxy GET Error:', error);
+    } catch (error: unknown) {
+        const err = error as Error;
+        console.error('Proxy GET Error:', err);
         return NextResponse.json({
-            error: error.message || 'Failed to fetch from Google Sheets'
+            error: err.message || 'Failed to fetch from Google Sheets'
         }, { status: 500 });
     }
 }
@@ -48,7 +47,7 @@ export async function POST(request: NextRequest) {
     try {
         if (!GOOGLE_SHEET_URL) throw new Error('GOOGLE_SHEET_URL is not defined in app-config.js');
 
-        const body = await request.json();
+        const body = (await request.json()) as Record<string, unknown>;
         console.log('Proxy POST body:', body);
 
         const response = await fetch(GOOGLE_SHEET_URL, {
@@ -70,16 +69,17 @@ export async function POST(request: NextRequest) {
                 message: JSON.parse(result),
                 sentBody: body
             }, { status: response.status });
-        } catch (e) {
+        } catch {
             return NextResponse.json({
                 message: result,
                 sentBody: body
             }, { status: response.status });
         }
-    } catch (error: any) {
-        console.error('Proxy POST Error:', error);
+    } catch (error: unknown) {
+        const err = error as Error;
+        console.error('Proxy POST Error:', err);
         return NextResponse.json({
-            error: error.message || 'Failed to update Google Sheets'
+            error: err.message || 'Failed to update Google Sheets'
         }, { status: 500 });
     }
 }
