@@ -4,7 +4,7 @@ import { GOOGLE_SHEET_URL } from '@/lib/config';
 export async function GET() {
     console.log('Proxy GET started for:', GOOGLE_SHEET_URL);
     try {
-        if (!GOOGLE_SHEET_URL) throw new Error('GOOGLE_SHEET_URL is not defined in app-config.js');
+        if (!GOOGLE_SHEET_URL) throw new Error('GOOGLE_SHEET_URL is not defined in environment variables or config.ts');
 
         const response = await fetch(GOOGLE_SHEET_URL, {
             cache: 'no-store',
@@ -45,7 +45,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
     console.log('Proxy POST started');
     try {
-        if (!GOOGLE_SHEET_URL) throw new Error('GOOGLE_SHEET_URL is not defined in app-config.js');
+        if (!GOOGLE_SHEET_URL) throw new Error('GOOGLE_SHEET_URL is not defined in environment variables or config.ts');
 
         const body = (await request.json()) as Record<string, unknown>;
         console.log('Proxy POST body:', body);

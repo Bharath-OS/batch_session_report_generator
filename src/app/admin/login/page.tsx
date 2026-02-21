@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input, Button, Label } from '@/components/FormElements';
 
-import { ADMIN_CONFIG } from '@/../app-config';
+import { ADMIN_CONFIG } from '@/lib/config';
 
 export default function AdminLogin() {
     const [email, setEmail] = useState('');
