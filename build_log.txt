@@ -1,0 +1,233 @@
+
+> app-setup@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/8) ...
+TypeError: h is not a function
+    at x (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/admin/login/page.js:1:5984)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at AsyncLocalStorage.run (node:async_hooks:338:14)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:150805) {
+  digest: '1319916484'
+}
+TypeError: h is not a function
+    at x (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/admin/login/page.js:1:5984)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135497)
+    at listOnTimeout (node:internal/timers:569:17) {
+  digest: '2943275801'
+}
+TypeError: h is not a function
+    at x (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/admin/login/page.js:1:5984)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135497)
+    at listOnTimeout (node:internal/timers:569:17) {
+  digest: '2943275801'
+}
+TypeError: m is not a function
+    at u (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/admin/page.js:1:20425)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at AsyncLocalStorage.run (node:async_hooks:338:14)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:150805) {
+  digest: '1720435476'
+}
+TypeError: m is not a function
+    at u (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/admin/page.js:1:20425)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135497)
+    at listOnTimeout (node:internal/timers:569:17) {
+  digest: '2547773609'
+}
+
+Error occurred prerendering page "/admin/login". Read more: https://nextjs.org/docs/messages/prerender-error
+
+TypeError: h is not a function
+    at x (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/admin/login/page.js:1:5984)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at AsyncLocalStorage.run (node:async_hooks:338:14)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:150805)
+   Generating static pages (2/8) 
+TypeError: m is not a function
+    at u (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/page.js:23:8471)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at AsyncLocalStorage.run (node:async_hooks:338:14)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:150805) {
+  digest: '2119969023'
+}
+TypeError: h is not a function
+    at m (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/_not-found/page.js:1:4054)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at AsyncLocalStorage.run (node:async_hooks:338:14)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:150805) {
+  digest: '223329990'
+}
+TypeError: h is not a function
+    at m (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/_not-found/page.js:1:4054)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135497)
+    at listOnTimeout (node:internal/timers:569:17) {
+  digest: '2634938683'
+}
+TypeError: h is not a function
+    at m (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/_not-found/page.js:1:4054)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135497)
+    at listOnTimeout (node:internal/timers:569:17) {
+  digest: '2634938683'
+}
+
+Error occurred prerendering page "/_not-found". Read more: https://nextjs.org/docs/messages/prerender-error
+
+TypeError: h is not a function
+    at m (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/_not-found/page.js:1:4054)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at AsyncLocalStorage.run (node:async_hooks:338:14)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:150805)
+TypeError: m is not a function
+    at u (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/admin/page.js:1:20425)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135497)
+    at listOnTimeout (node:internal/timers:569:17) {
+  digest: '2547773609'
+}
+
+Error occurred prerendering page "/admin". Read more: https://nextjs.org/docs/messages/prerender-error
+
+TypeError: m is not a function
+    at u (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/admin/page.js:1:20425)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at AsyncLocalStorage.run (node:async_hooks:338:14)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:150805)
+TypeError: m is not a function
+    at u (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/page.js:23:8471)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135497)
+    at listOnTimeout (node:internal/timers:569:17) {
+  digest: '1347058370'
+}
+TypeError: m is not a function
+    at u (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/page.js:23:8471)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135497)
+    at listOnTimeout (node:internal/timers:569:17) {
+  digest: '1347058370'
+}
+   Generating static pages (4/8) 
+   Generating static pages (6/8) 
+
+Error occurred prerendering page "/". Read more: https://nextjs.org/docs/messages/prerender-error
+
+TypeError: m is not a function
+    at u (/home/bharath/StudioProjects/automated-student-reporting-system/.next/server/app/page.js:23:8471)
+    at em (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134808)
+    at e (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137693)
+    at e_ (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138168)
+    at Array.toJSON (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135777)
+    at stringify (<anonymous>)
+    at eE (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142242)
+    at eT (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142721)
+    at AsyncLocalStorage.run (node:async_hooks:338:14)
+    at Timeout._onTimeout (/home/bharath/StudioProjects/automated-student-reporting-system/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:150805)
+ ✓ Generating static pages (8/8)
+
+> Export encountered errors on following paths:
+	/_not-found/page: /_not-found
+	/admin/login/page: /admin/login
+	/admin/page: /admin
+	/page: /

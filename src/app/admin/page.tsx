@@ -65,9 +65,9 @@ const emptyForm = {
     status: 'Active' as StudentStatus,
 };
 
-const DOMAINS: Domain[] = ['Flutter', 'MERN', 'MEAN', 'Django', 'Data Science', 'UI/UX', 'Cyber Security'];
+const DOMAINS: Domain[] = ['Flutter', 'MERN', 'MEAN', 'Django', 'Data Science', 'Cyber Security', 'Java Spring Boot', 'Machine Learning', 'Game Development', 'DevOps'];
 const GROUPS: GroupNumber[] = ['1', '2', '3'];
-const STATUSES: StudentStatus[] = ['Active', 'PRP'];
+const STATUSES: StudentStatus[] = ['Active', 'N/A'];
 
 type FormErrors = Partial<Record<'name' | 'batch', string>>;
 
@@ -80,7 +80,7 @@ function Toast({ message, type = 'success', onDone }: { message: string; type?: 
         return () => { clearTimeout(hide); clearTimeout(done); };
     }, [onDone]);
     return (
-        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl text-sm font-semibold w-max max-w-xs backdrop-blur-sm border ${exiting ? 'toast-exit' : 'toast-enter'} ${type === 'success' ? 'bg-foreground text-white border-white/10' : 'bg-danger text-white border-danger-dark'}`}>
+        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl text-sm font-semibold w-max max-w-xs bg-foreground text-white border border-white/10 ${exiting ? 'toast-exit' : 'toast-enter'} ${type === 'danger' ? 'bg-danger border-danger-dark' : ''}`}>
             {type === 'success' ? (
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
             ) : (
