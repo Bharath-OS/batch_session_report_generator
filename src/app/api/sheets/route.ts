@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GOOGLE_SHEET_URL } from '../../../../app-config';
+import { GOOGLE_SHEET_URL } from '@/lib/config';
 
 export async function GET() {
     console.log('Proxy GET started for:', GOOGLE_SHEET_URL);
