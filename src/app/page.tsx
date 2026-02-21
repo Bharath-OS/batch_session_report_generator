@@ -219,10 +219,11 @@ ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
           </div>
 
           <div>
-            <Label>TLDV Recording Link <span className="font-normal text-secondary">(Optional)</span></Label>
+            <Label>TLDV Recording Link</Label>
             <Input
               type="url"
               value={tldvLink}
+              required
               onChange={e => setTldvLink(e.target.value)}
               placeholder="https://tldv.io/…"
             />
@@ -237,8 +238,15 @@ ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
             <span className="w-7 h-7 bg-primary-light text-primary rounded-lg flex items-center justify-center text-sm">✅</span>
             Attendance
           </h2>
-          <button type="button" onClick={handleInvert} className="btn-secondary text-xs px-3 py-1.5">
-            🔄 Invert
+          <button type="button" onClick={handleInvert} className="btn-secondary text-xs px-3 py-1.5 flex items-center gap-1.5">
+            {/* Swap / invert icon */}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="17 1 21 5 17 9" />
+              <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+              <polyline points="7 23 3 19 7 15" />
+              <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+            </svg>
+            Invert
           </button>
         </div>
         <p className="text-xs text-secondary mb-4">Click a name to toggle between Present and Absent.</p>
