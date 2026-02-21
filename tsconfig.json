@@ -31,6 +31,7 @@
   },
   "include": [
     "next-env.d.ts",
+    "app-config.js",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"

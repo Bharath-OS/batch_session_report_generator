@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input, Button, Label } from '@/components/FormElements';
 
+// @ts-ignore
+import { ADMIN_CONFIG } from '@/../app-config';
+
 export default function AdminLogin() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -12,7 +15,7 @@ export default function AdminLogin() {
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        if (email === 'bcr306admin@gmail.com' && password === 'bcr306adminpanel') {
+        if (email === ADMIN_CONFIG.email && password === ADMIN_CONFIG.password) {
             // Very basic mock authentication using localStorage
             localStorage.setItem('adminAuth', 'true');
             router.push('/admin');

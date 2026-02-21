@@ -324,6 +324,20 @@ export default function AdminDashboard() {
         getStudents().then(data => { setStudents(data); setIsLoading(false); });
     }, [router]);
 
+    const lastUpdated = students.length > 0
+        ? new Date(Math.max(...students.map(s => {
+            const d = new Date(s.id);
+            return isNaN(d.getTime()) ? 0 : d.getTime();
+        }))).toLocaleString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        })
+        : 'None';
+
     const handleLogout = () => { localStorage.removeItem('adminAuth'); router.push('/admin/login'); };
 
     // Unique batch values for filter
@@ -406,7 +420,12 @@ export default function AdminDashboard() {
                 <div className="flex items-start justify-between gap-4 mb-6">
                     <div>
                         <h2 className="text-3xl font-extrabold text-foreground tracking-tight">Admin Dashboard</h2>
-                        <h3 className="text-base font-semibold text-secondary mt-1">All Students</h3>
+                        <div className="flex items-center gap-2 mt-1">
+                            <h3 className="text-base font-semibold text-secondary">All Students</h3>
+                            <span className="text-[10px] bg-primary/10 text-primary-dark px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">
+                                Last Updated: {lastUpdated}
+                            </span>
+                        </div>
                     </div>
                     <button onClick={handleLogout} className="btn-secondary text-sm shrink-0 mt-1">Logout</button>
                 </div>
