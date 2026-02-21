@@ -76,16 +76,13 @@ export default function StudentPage() {
   const handleCreateReport = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Sort students alphabetically for the report
     const presentList = [...presentStudents].sort((a, b) => a.name.localeCompare(b.name));
     const absentList = [...absentStudents].sort((a, b) => a.name.localeCompare(b.name));
     const prpList = [...prpStudents].sort((a, b) => a.name.localeCompare(b.name));
 
-    // Format date as dd-mm-yyyy
     const [yyyy, mm, dd] = date.split('-');
     const formattedDate = `${dd}-${mm}-${yyyy}`;
 
-    // Construct the WhatsApp text block
     const reportText = `📘 *BCR 306 Session Report* 📘
 
 📌 *Group Number:* Group ${selectedGroup}
@@ -122,55 +119,83 @@ ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
   };
 
   if (isLoading) {
-    return <div className="text-center py-10">Loading student roster...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="flex flex-col items-center gap-3 text-secondary">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm font-medium">Loading student roster…</span>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-[800px] mx-auto space-y-6">
+      {/* Session Details Card */}
       <div className="card-container">
-        <h2 className="text-xl font-bold text-primary-dark mb-4 border-b border-light/50 pb-2">Session Details</h2>
+        <h2 className="text-lg font-bold text-foreground mb-5 flex items-center gap-2">
+          <span className="w-7 h-7 bg-primary-light text-primary rounded-lg flex items-center justify-center text-sm">📋</span>
+          Session Details
+        </h2>
 
-        <form id="report-form" onSubmit={handleCreateReport} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="md:col-span-2">
-            <Label>Select Group</Label>
-            <Select
-              value={selectedGroup}
-              onChange={e => setSelectedGroup(e.target.value as GroupNumber)}
-            >
-              <option value="1">Group 1</option>
-              <option value="2">Group 2</option>
-              <option value="3">Group 3</option>
-            </Select>
+        <form id="report-form" onSubmit={handleCreateReport} className="space-y-4">
+          {/* Group + Date row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <Label>Select Group</Label>
+              <Select
+                value={selectedGroup}
+                onChange={e => setSelectedGroup(e.target.value as GroupNumber)}
+              >
+                <option value="1">Group 1</option>
+                <option value="2">Group 2</option>
+                <option value="3">Group 3</option>
+              </Select>
+            </div>
+
+            {/* Modern Date Picker */}
+            <div>
+              <Label>Date</Label>
+              <div className="relative">
+                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-primary pointer-events-none">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                </div>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={e => setDate(e.target.value)}
+                  required
+                  className="input-field pl-10 cursor-pointer font-medium"
+                />
+              </div>
+            </div>
           </div>
 
-          <div>
-            <Label>Date</Label>
-            <Input
-              type="date"
-              value={date}
-              onChange={e => setDate(e.target.value)}
-              required
-            />
-          </div>
-
-          <div>
-            <Label>Trainer Name</Label>
-            <Input
-              value={trainer}
-              onChange={e => setTrainer(e.target.value)}
-              required
-              placeholder="e.g. John Doe"
-            />
-          </div>
-
-          <div>
-            <Label>Coordinators</Label>
-            <Input
-              value={coordinators}
-              onChange={e => setCoordinators(e.target.value)}
-              required
-              placeholder="e.g. Jane Smith"
-            />
+          {/* Trainer + Coordinators */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <Label>Trainer Name</Label>
+              <Input
+                value={trainer}
+                onChange={e => setTrainer(e.target.value)}
+                required
+                placeholder="e.g. John Doe"
+              />
+            </div>
+            <div>
+              <Label>Coordinators</Label>
+              <Input
+                value={coordinators}
+                onChange={e => setCoordinators(e.target.value)}
+                required
+                placeholder="e.g. Jane Smith"
+              />
+            </div>
           </div>
 
           <div>
@@ -183,91 +208,105 @@ ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
             />
           </div>
 
-          <div className="md:col-span-2">
+          <div>
             <Label>Session Overview</Label>
             <Textarea
               value={overview}
               onChange={e => setOverview(e.target.value)}
               required
-              placeholder="Brief summary of what was covered..."
+              placeholder="Brief summary of what was covered…"
             />
           </div>
 
-          <div className="md:col-span-2 border-b border-secondary-light/50 pb-4 mb-2">
-            <Label>TLDV Recording Link (Optional)</Label>
+          <div>
+            <Label>TLDV Recording Link</Label>
             <Input
               type="url"
               value={tldvLink}
+              required
               onChange={e => setTldvLink(e.target.value)}
-              placeholder="https://tldv.io/..."
+              placeholder="https://tldv.io/…"
             />
           </div>
         </form>
       </div>
 
+      {/* Attendance Card */}
       <div className="card-container">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-primary-dark">Attendance Selection</h2>
-          <Button type="button" variant="secondary" onClick={handleInvert} className="text-xs px-3 py-1.5">
-            🔄 Invert Selection
-          </Button>
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+            <span className="w-7 h-7 bg-primary-light text-primary rounded-lg flex items-center justify-center text-sm">✅</span>
+            Attendance
+          </h2>
+          <button type="button" onClick={handleInvert} className="btn-secondary text-xs px-3 py-1.5 flex items-center gap-1.5">
+            {/* Swap / invert icon */}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="17 1 21 5 17 9" />
+              <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+              <polyline points="7 23 3 19 7 15" />
+              <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+            </svg>
+            Invert
+          </button>
         </div>
+        <p className="text-xs text-secondary mb-4">Click a name to toggle between Present and Absent.</p>
 
-        <p className="text-sm text-secondary-dark mb-4">Click on a name to move them between Present and Absent columns.</p>
-
+        {/* Two-column attendance grid — fixed height with scroll */}
         <div className="grid grid-cols-2 gap-4">
           {/* Present Column */}
-          <div className="bg-success-light/30 border border-success-light rounded-xl p-3 min-h-[200px]">
-            <h3 className="font-semibold text-success-dark mb-3 flex items-center justify-between">
-              <span>Present ✅</span>
-              <span className="text-xs bg-success-light px-2 py-0.5 rounded-full">{presentStudents.length}</span>
+          <div className="bg-success-light/30 border border-success-light rounded-xl p-3 flex flex-col">
+            <h3 className="font-semibold text-success-dark mb-3 flex items-center justify-between text-sm shrink-0">
+              <span>✅ Present</span>
+              <span className="text-xs bg-success-light text-success-dark px-2 py-0.5 rounded-full font-bold">{presentStudents.length}</span>
             </h3>
-            <ul className="space-y-1.5">
+            <ul className="space-y-1.5 overflow-y-auto max-h-56 pr-1 custom-scroll">
               {presentStudents.map(student => (
                 <li
                   key={student.id}
                   onClick={() => toggleAttendance(student.id)}
-                  className="cursor-pointer bg-white px-3 py-2 rounded-lg text-sm text-foreground shadow-sm hover:shadow-md hover:border-success-light border border-transparent transition-all select-none"
+                  className="cursor-pointer bg-white px-3 py-2 rounded-lg text-sm text-foreground shadow-sm hover:shadow-md border border-transparent hover:border-success-light transition-all select-none truncate"
+                  title={student.name}
                 >
                   {student.name}
                 </li>
               ))}
               {presentStudents.length === 0 && (
-                <li className="text-sm text-secondary-dark text-center py-4 italic">No one present</li>
+                <li className="text-xs text-secondary text-center py-6 italic">No one marked present</li>
               )}
             </ul>
           </div>
 
           {/* Absent Column */}
-          <div className="bg-danger-light/30 border border-danger-light rounded-xl p-3 min-h-[200px]">
-            <h3 className="font-semibold text-danger-dark mb-3 flex items-center justify-between">
-              <span>Absent ❌</span>
-              <span className="text-xs bg-danger-light px-2 py-0.5 rounded-full">{absentStudents.length}</span>
+          <div className="bg-danger-light/30 border border-danger-light rounded-xl p-3 flex flex-col">
+            <h3 className="font-semibold text-danger-dark mb-3 flex items-center justify-between text-sm shrink-0">
+              <span>❌ Absent</span>
+              <span className="text-xs bg-danger-light text-danger-dark px-2 py-0.5 rounded-full font-bold">{absentStudents.length}</span>
             </h3>
-            <ul className="space-y-1.5">
+            <ul className="space-y-1.5 overflow-y-auto max-h-56 pr-1 custom-scroll">
               {absentStudents.map(student => (
                 <li
                   key={student.id}
                   onClick={() => toggleAttendance(student.id)}
-                  className="cursor-pointer bg-white px-3 py-2 rounded-lg text-sm text-foreground shadow-sm hover:shadow-md hover:border-danger-light border border-transparent transition-all select-none"
+                  className="cursor-pointer bg-white px-3 py-2 rounded-lg text-sm text-foreground shadow-sm hover:shadow-md border border-transparent hover:border-danger-light transition-all select-none truncate"
+                  title={student.name}
                 >
                   {student.name}
                 </li>
               ))}
               {absentStudents.length === 0 && (
-                <li className="text-sm text-secondary-dark text-center py-4 italic">No one absent</li>
+                <li className="text-xs text-secondary text-center py-6 italic">No one absent</li>
               )}
             </ul>
           </div>
         </div>
 
-        {/* PRP Section (Read only) */}
+        {/* PRP Section */}
         {prpStudents.length > 0 && (
-          <div className="mt-6 bg-secondary-light/30 rounded-xl p-3 border border-secondary-light">
-            <h3 className="font-semibold text-secondary-dark mb-2 text-sm">N/A (PRP / Not Active)</h3>
+          <div className="mt-4 bg-secondary-light/30 rounded-xl p-3 border border-secondary-light">
+            <h3 className="font-semibold text-secondary-dark mb-2 text-xs uppercase tracking-wider">N/A — PRP / Not Active</h3>
             <div className="flex flex-wrap gap-2">
               {prpStudents.map(student => (
-                <span key={student.id} className="text-xs bg-white text-secondary-dark px-2.5 py-1 rounded border border-secondary-light shadow-sm">
+                <span key={student.id} className="text-xs bg-white text-secondary-dark px-2.5 py-1 rounded-lg border border-secondary-light shadow-sm">
                   {student.name}
                 </span>
               ))}
@@ -276,18 +315,18 @@ ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
         )}
       </div>
 
-      <div className="pt-2">
-        <Button type="submit" form="report-form" className="w-full text-lg py-3">
-          Generate Report
-        </Button>
-      </div>
+      {/* Generate Button */}
+      <button type="submit" form="report-form" className="btn-primary w-full text-base py-3.5 rounded-xl">
+        Create Report ✨
+      </button>
 
+      {/* Report Modal */}
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Session Report Ready">
         <div className="space-y-4">
           <p className="text-sm text-secondary-dark text-center">
             Review your formatted report below and click Copy to send it in WhatsApp.
           </p>
-          <div className="bg-secondary-light/30 rounded-xl p-4 border border-secondary-light max-h-[50vh] overflow-y-auto whitespace-pre-wrap font-sans text-sm text-foreground">
+          <div className="bg-secondary-light/30 rounded-xl p-4 border border-secondary-light max-h-[50vh] overflow-y-auto whitespace-pre-wrap font-mono text-xs text-foreground leading-relaxed">
             {reportOutput}
           </div>
           <Button
@@ -299,7 +338,6 @@ ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
           </Button>
         </div>
       </Modal>
-
     </div>
   );
 }

@@ -6,26 +6,96 @@
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary-light selection:text-primary-dark;
   }
+
+  /* Modern date input styling */
+  input[type="date"] {
+    color-scheme: light;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0.6;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 2px;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+    background-color: #E0F2FE;
+  }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-dark transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+    @apply bg-primary text-white px-4 py-2 rounded-xl font-semibold hover:bg-primary-dark transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
   }
-  
+
   .btn-secondary {
-    @apply bg-white border border-secondary/20 text-secondary-dark px-4 py-2 rounded-lg font-medium hover:bg-secondary-light transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
+    @apply bg-white border border-secondary/20 text-secondary-dark px-4 py-2 rounded-xl font-semibold hover:bg-secondary-light transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary/30 focus:ring-offset-2 active:scale-[0.98];
+  }
+
+  .btn-danger {
+    @apply bg-danger-light text-danger-dark border border-danger/20 px-3 py-1.5 rounded-lg font-medium hover:bg-danger hover:text-white transition-all;
   }
 
   .input-field {
-    @apply w-full border border-secondary/20 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors;
+    @apply w-full border border-secondary/20 rounded-xl px-3.5 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all text-foreground placeholder:text-secondary/60;
   }
-  
+
+  .input-error {
+    @apply border-danger focus:ring-danger/40 focus:border-danger;
+  }
+
   .label-text {
-    @apply block text-sm font-medium text-secondary-dark mb-1;
+    @apply block text-sm font-semibold text-secondary-dark mb-1.5 tracking-wide;
   }
 
   .card-container {
-    @apply bg-white rounded-2xl shadow-soft p-6 border border-secondary-light;
+    @apply bg-white rounded-2xl shadow-soft p-6 border border-secondary-light/80;
+  }
+
+  .icon-btn {
+    @apply p-2 rounded-lg transition-all flex items-center justify-center;
+  }
+
+  .icon-btn-edit {
+    @apply icon-btn text-primary bg-primary-light/60 hover:bg-primary-light hover:text-primary-dark;
+  }
+
+  .icon-btn-delete {
+    @apply icon-btn text-danger bg-danger-light/60 hover:bg-danger-light hover:text-danger-dark;
+  }
+
+  /* Toast animation */
+  @keyframes slideInUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideOutDown {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    to {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+  }
+
+  .toast-enter {
+    animation: slideInUp 0.3s ease forwards;
+  }
+
+  .toast-exit {
+    animation: slideOutDown 0.3s ease forwards;
   }
 }
