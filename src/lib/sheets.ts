@@ -2,11 +2,7 @@ const API_URL = '/api/sheets';
 
 export type StudentStatus = 'Active' | 'N/A';
 export type GroupNumber = '1' | '2' | '3';
-<<<<<<< HEAD
-export type Domain = 'Flutter' | 'MERN' | 'MEAN' | 'Django' | 'Data Science' | 'Cyber Security' | 'Java Spring Boot' | 'Machine Learning' | 'Game Development';
-=======
 export type Domain = 'Flutter' | 'MERN' | 'MEAN' | 'Django' | 'Data Science' | 'Cyber Security' | 'Java Spring Boot' | 'Machine Learning' | 'Game Development' | 'DevOps';
->>>>>>> development
 
 export interface Student {
     id: string; // Map from 'Timestamp'
