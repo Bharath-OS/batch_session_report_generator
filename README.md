@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# QuickReport 🚀
+**The fastest way to generate and sync batch session reports.**
 
-## Getting Started
+QuickReport is a lightweight web application built with **Next.js** designed to help batch coordinators and students generate professional session reports in seconds. It automates the tedious parts of reporting—like tracking attendance and formatting text—while keeping everything synced with a **Google Sheets** backend.
 
-First, run the development server:
+Live Demo: [https://batch-session-report-generator.vercel.app/](https://batch-session-report-generator.vercel.app/)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Key Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Smart Attendance Logic:** Instead of manually checking every name, use the **Invert Toggle**. Mark the few students who are absent (or present), and let the system handle the rest.
+- **Instant Report Generation:** Converts form data into a perfectly formatted text summary ready for sharing on WhatsApp or Slack.
+- **Google Sheets Integration:** No expensive database needed. Uses Google Apps Script to securely Add, Edit, and Delete student records in real-time.
+- **Role-Based Workflow:** - **Admin:** Manage the student roster (CRUD operations).
+  - **Students:** Fill out daily session details and generate reports.
+- **Mobile Responsive:** Built with Tailwind CSS to ensure reporting can be done from any device.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠️ Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Frontend:** [Next.js](https://nextjs.org/) (App Router)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Database:** [Google Sheets API / Apps Script](https://developers.google.com/apps-script)
+- **Deployment:** [Vercel](https://vercel.com/)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 How It Works
 
-## Deploy on Vercel
+1. **Setup Batch:** The Admin adds the student list via the Admin Dashboard.
+2. **Input Session Details:** The reporter enters the Date, Trainer Name, and a brief Session Summary.
+3. **Smart Attendance:** - Select the few students who are absent.
+   - Click "Invert" to automatically mark everyone else as present.
+4. **Generate & Share:** Click "Generate Report" to get a clean text summary. Use the "Copy" button to share it with your group instantly.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ⚙️ Configuration (For Developers)
+
+To run this locally, follow these steps:
+
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/your-username/quickreport.git](https://github.com/your-username/quickreport.git)
