@@ -12,8 +12,8 @@ export default function Header() {
                         </svg>
                     </div>
                     <div className="flex items-baseline gap-1">
-                        <span className="text-lg font-extrabold text-foreground tracking-tight">BCR 306</span>
-                        <span className="text-sm font-medium text-secondary hidden sm:inline">Session Report Generator</span>
+                        <span className="text-lg font-extrabold text-foreground tracking-tight">QuickReport</span>
+                        {/* <span className="text-sm font-medium text-secondary hidden sm:inline">Session Report Generator</span> */}
                     </div>
                 </Link>
 
