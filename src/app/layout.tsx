@@ -8,8 +8,11 @@ const poppins = Poppins({ weight: ["400", "500", "600", "700"], subsets: ["latin
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "BCR 306 Session Report Generator",
-  description: "Minimal web application to generate formatted session reports",
+  title: "QuickReport",
+  description: "Fastest batch session report generator",
+  icons: {
+    icon: 'src/app/favicon.ico',
+  },
 };
 
 export default function RootLayout({

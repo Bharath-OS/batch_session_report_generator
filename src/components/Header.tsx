@@ -1,19 +1,24 @@
 import Link from "next/link";
+import Image from 'next/image';
 
 export default function Header() {
     return (
         <header className="w-full sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-secondary-light/60 shadow-sm transition-colors duration-300">
             <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-2.5 group hover:opacity-90 transition-opacity">
-                    {/* Logo mark */}
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-sm">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M2 4h12M2 8h8M2 12h10" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
-                        </svg>
+                    {/* Logo mark replaced with your Favicon */}
+                    <div className="w-9 h-9 relative flex items-center justify-center overflow-hidden rounded-lg shadow-sm">
+                        <Image
+                            src="/favicon.ico"
+                            alt="QuickReport Logo"
+                            width={36}
+                            height={36}
+                            className="object-contain"
+                        />
                     </div>
+
                     <div className="flex items-baseline gap-1">
                         <span className="text-lg font-extrabold text-foreground tracking-tight">QuickReport</span>
-                        {/* <span className="text-sm font-medium text-secondary hidden sm:inline">Session Report Generator</span> */}
                     </div>
                 </Link>
 
