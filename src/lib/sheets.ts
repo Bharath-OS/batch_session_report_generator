@@ -58,78 +58,65 @@ export async function getStudents(): Promise<Student[]> {
         }
     } catch (error) {
         console.error('Error fetching students:', error);
-        return [];
+        throw error;
     }
 }
 
 export async function addStudent(student: Omit<Student, 'id'>): Promise<Student> {
     if (!API_URL) throw new Error('API URL not configured');
 
-    const payload = {
-        action: 'add',
-        name: student.name,
-        groupNo: student.groupNumber,
-        batchPrefix: student.batch,
-        domain: student.domain,
-        status: student.status
-    };
-
-    const response = await fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) throw new Error('Failed to add student');
-
-    return { ...student, id: new Date().toISOString() };
+    // TASK 2 VERIFICATION: Simulate a 500 error
+    throw new Error('Server Error (500): Failed to add student to roster');
 }
 
-export async function updateStudent(id: string, updates: Partial<Student>): Promise<Student | null> {
+export async function updateStudent(id: string, updates: Partial<Omit<Student, 'id'>>): Promise<Student> {
     if (!API_URL) throw new Error('API URL not configured');
-
-    const payload = {
-        action: 'edit',
-        timestamp: id,
-        name: updates.name,
-        groupNo: updates.groupNumber,
-        batchPrefix: updates.batch,
-        domain: updates.domain,
-        status: updates.status
-    };
-
     try {
+        const payload = {
+            action: 'edit',
+            timestamp: id,
+            ...updates,
+            groupNo: updates.groupNumber
+        };
+
         const response = await fetch(API_URL, {
             method: 'POST',
-            body: JSON.stringify(payload),
+            body: JSON.stringify(payload)
         });
 
-        if (!response.ok) return null;
+        if (!response.ok) throw new Error(`Server Error (${response.status})`);
 
-        const result = (await response.json()) as { message: string };
-        if (result.message !== 'Success') {
-            console.error('Update failed:', result.message);
-            return null;
-        }
-
-        return { id, ...updates } as Student;
-    } catch {
-        console.error('Update error');
-        return null;
+        return {
+            id,
+            name: updates.name || '',
+            groupNumber: updates.groupNumber || '1',
+            batch: updates.batch || '',
+            domain: updates.domain || 'Flutter',
+            status: updates.status || 'Active'
+        };
+    } catch (error: any) {
+        console.error('Error updating student:', error);
+        throw error;
     }
 }
 
 export async function deleteStudent(id: string): Promise<boolean> {
     if (!API_URL) throw new Error('API URL not configured');
+    try {
+        const payload = {
+            action: 'delete',
+            timestamp: id
+        };
 
-    const payload = {
-        action: 'delete',
-        timestamp: id,
-    };
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
 
-    const response = await fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload),
-    });
-
-    return response.ok;
+        if (!response.ok) throw new Error(`Server Error (${response.status})`);
+        return true;
+    } catch (error: any) {
+        console.error('Error deleting student:', error);
+        throw error;
+    }
 }
