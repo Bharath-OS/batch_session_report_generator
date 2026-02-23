@@ -9,7 +9,7 @@ export default function Header() {
                     {/* Logo mark replaced with your Favicon */}
                     <div className="w-9 h-9 relative flex items-center justify-center overflow-hidden rounded-lg shadow-sm">
                         <Image
-                            src="/favicon.ico"
+                            src="src/app/favicon.ico"
                             alt="QuickReport Logo"
                             width={36}
                             height={36}
