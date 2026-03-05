@@ -62,7 +62,8 @@ export async function getStudents(): Promise<Student[]> {
     }
 }
 
-export async function addStudent(student: Omit<Student, 'id'>): Promise<Student> {
+export async function addStudent(_student: Omit<Student, 'id'>): Promise<Student> {
+    void _student;
     if (!API_URL) throw new Error('API URL not configured');
 
     // TASK 2 VERIFICATION: Simulate a 500 error
@@ -94,7 +95,7 @@ export async function updateStudent(id: string, updates: Partial<Omit<Student, '
             domain: updates.domain || 'Flutter',
             status: updates.status || 'Active'
         };
-    } catch (error: any) {
+    } catch (error) {
         console.error('Error updating student:', error);
         throw error;
     }
@@ -115,7 +116,7 @@ export async function deleteStudent(id: string): Promise<boolean> {
 
         if (!response.ok) throw new Error(`Server Error (${response.status})`);
         return true;
-    } catch (error: any) {
+    } catch (error) {
         console.error('Error deleting student:', error);
         throw error;
     }

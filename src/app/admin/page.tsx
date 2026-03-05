@@ -358,8 +358,9 @@ export default function AdminDashboard() {
             }
             setFormOpen(false);
             setEditTarget(null);
-        } catch (err: any) {
-            showToast(err.message || 'Failed to save student', 'error');
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Failed to save student';
+            showToast(msg, 'error');
         } finally {
             setIsSaving(false);
         }
@@ -374,8 +375,9 @@ export default function AdminDashboard() {
             setStudents(prev => prev.filter(s => s.id !== deleteTarget.id));
             setDeleteTarget(null);
             showToast(`${name} has been removed from the roster`, 'success');
-        } catch (err: any) {
-            showToast(err.message || 'Failed to delete student', 'error');
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Failed to delete student';
+            showToast(msg, 'error');
         } finally {
             setIsDeleting(false);
         }
