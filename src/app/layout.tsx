@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Outfit, Poppins, Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 const poppins = Poppins({ weight: ["400", "500", "600", "700"], subsets: ["latin"], variable: "--font-poppins" });
@@ -27,6 +29,8 @@ export default function RootLayout({
         <main className="flex-1 w-full max-w-[1100px] mx-auto px-4 py-8">
           {children}
         </main>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
