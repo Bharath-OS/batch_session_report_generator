@@ -12,6 +12,7 @@ import {
     GroupNumber,
     StudentStatus,
 } from '@/lib/sheets';
+import Toast from '@/components/Toast';
 
 // ─── SVG Icons ───────────────────────────────────────────────────────────────
 const EditIcon = () => (
@@ -71,25 +72,7 @@ const STATUSES: StudentStatus[] = ['Active', 'N/A'];
 
 type FormErrors = Partial<Record<'name' | 'batch', string>>;
 
-// ─── Toast ───────────────────────────────────────────────────────────────────
-function Toast({ message, type = 'success', onDone }: { message: string; type?: 'success' | 'danger'; onDone: () => void }) {
-    const [exiting, setExiting] = useState(false);
-    useEffect(() => {
-        const hide = setTimeout(() => setExiting(true), 2800);
-        const done = setTimeout(onDone, 3200);
-        return () => { clearTimeout(hide); clearTimeout(done); };
-    }, [onDone]);
-    return (
-        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl text-sm font-semibold w-max max-w-xs bg-foreground text-white border border-white/10 ${exiting ? 'toast-exit' : 'toast-enter'} ${type === 'danger' ? 'bg-danger border-danger-dark' : ''}`}>
-            {type === 'success' ? (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-            ) : (
-                <DeleteIcon />
-            )}
-            {message}
-        </div>
-    );
-}
+// Local Toast removed in favor of centralized component.
 
 // ─── Filter Dropdown ──────────────────────────────────────────────────────────
 function FilterDropdown<T extends string>({
@@ -310,7 +293,7 @@ export default function AdminDashboard() {
     const [deleteTarget, setDeleteTarget] = useState<Student | null>(null);
 
     // Toast
-    const [toast, setToast] = useState<{ msg: string; type: 'success' | 'danger' } | null>(null);
+    const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' | 'info' } | null>(null);
 
     // Filters
     const [filterGroup, setFilterGroup] = useState<GroupNumber | 'all'>('all');
@@ -322,7 +305,12 @@ export default function AdminDashboard() {
     useEffect(() => {
         const auth = localStorage.getItem('adminAuth');
         if (auth !== 'true') { router.push('/admin/login'); return; }
-        getStudents().then(data => { setStudents(data); setIsLoading(false); });
+        getStudents()
+            .then(data => { setStudents(data); setIsLoading(false); })
+            .catch(err => {
+                showToast(err.message || 'Failed to load dashboard', 'error');
+                setIsLoading(false);
+            });
     }, [router]);
 
     const lastUpdated = students.length > 0
@@ -356,7 +344,7 @@ export default function AdminDashboard() {
     const hasFilters = filterGroup !== 'all' || filterDomain !== 'all' || filterStatus !== 'all' || filterBatch !== 'all' || searchTerm !== '';
     const clearFilters = () => { setFilterGroup('all'); setFilterDomain('all'); setFilterStatus('all'); setFilterBatch('all'); setSearchTerm(''); };
 
-    const showToast = (msg: string, type: 'success' | 'danger' = 'success') => setToast({ msg, type });
+    const showToast = (msg: string, type: 'success' | 'error' | 'info' = 'success') => setToast({ msg, type });
 
     const handleSave = async (form: typeof emptyForm) => {
         setIsSaving(true);
@@ -373,8 +361,8 @@ export default function AdminDashboard() {
             setFormOpen(false);
             setEditTarget(null);
         } catch (err) {
-            const msg = err instanceof Error ? err.message : 'Unknown error';
-            showToast(msg, 'danger');
+            const msg = err instanceof Error ? err.message : 'Failed to save student';
+            showToast(msg, 'error');
         } finally {
             setIsSaving(false);
         }
@@ -383,12 +371,18 @@ export default function AdminDashboard() {
     const handleDeleteConfirm = useCallback(async () => {
         if (!deleteTarget) return;
         setIsDeleting(true);
-        await deleteStudent(deleteTarget.id);
-        const name = deleteTarget.name;
-        setStudents(prev => prev.filter(s => s.id !== deleteTarget.id));
-        setDeleteTarget(null);
-        setIsDeleting(false);
-        showToast(`${name} has been removed from the roster`, 'danger');
+        try {
+            await deleteStudent(deleteTarget.id);
+            const name = deleteTarget.name;
+            setStudents(prev => prev.filter(s => s.id !== deleteTarget.id));
+            setDeleteTarget(null);
+            showToast(`${name} has been removed from the roster`, 'success');
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Failed to delete student';
+            showToast(msg, 'error');
+        } finally {
+            setIsDeleting(false);
+        }
     }, [deleteTarget]);
 
     if (isLoading) {
@@ -404,7 +398,7 @@ export default function AdminDashboard() {
 
     return (
         <>
-            {toast && <Toast key={toast.msg + Date.now()} message={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
+            {toast && <Toast key={toast.msg + Date.now()} message={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
 
             <StudentFormModal
                 isOpen={formOpen}

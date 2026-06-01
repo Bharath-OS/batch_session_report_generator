@@ -4,14 +4,16 @@ import "./globals.css";
 import Header from "@/components/Header";
 import { Analytics } from '@vercel/analytics/next';
 
-
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 const poppins = Poppins({ weight: ["400", "500", "600", "700"], subsets: ["latin"], variable: "--font-poppins" });
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: "QuickReport",
-  description: "Minimal web application to generate formatted session reports",
+  description: "Fastest batch session report generator",
+  icons: {
+    icon: 'src/app/favicon.ico',
+  },
 };
 
 export default function RootLayout({
