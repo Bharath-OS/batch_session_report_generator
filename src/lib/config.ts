@@ -5,8 +5,8 @@
  */
 
 export const ADMIN_CONFIG = {
-    email: process.env.ADMIN_EMAIL || 'bcr306admin@gmail.com',
-    password: process.env.ADMIN_PASSWORD || 'bcr306adminpanel'
+    email: process.env.ADMIN_EMAIL || '',
+    password: process.env.ADMIN_PASSWORD || ''
 };
 
 export const GOOGLE_SHEET_URL = process.env.NEXT_PUBLIC_GOOGLE_SHEET_URL || 'https://script.google.com/macros/s/AKfycbx2PHP3yFEtLl8HqU0LfZkXFlcQ1hwi4R8XAOVkiU9XPE-PmY6OshyKv5GMapPgg-Qe/exec';
