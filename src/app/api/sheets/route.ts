@@ -50,36 +50,50 @@ export async function POST(request: NextRequest) {
         const body = (await request.json()) as Record<string, unknown>;
         console.log('Proxy POST body:', body);
 
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
+
         const response = await fetch(GOOGLE_SHEET_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(body),
-            redirect: 'follow'
-        });
+            redirect: 'follow',
+            signal: controller.signal,
+        }).finally(() => clearTimeout(timeout));
 
         console.log('Google Script POST Response Status:', response.status);
         const result = await response.text();
         console.log('Google Script POST Result:', result);
 
-        // Apps Script might return JSON or plain text
-        try {
+        if (!response.ok) {
             return NextResponse.json({
-                message: JSON.parse(result),
-                sentBody: body
-            }, { status: response.status });
-        } catch {
-            return NextResponse.json({
+                error: `Google Script returned status ${response.status}`,
                 message: result,
                 sentBody: body
             }, { status: response.status });
         }
+
+        try {
+            return NextResponse.json({
+                message: JSON.parse(result),
+                sentBody: body
+            });
+        } catch {
+            return NextResponse.json({
+                message: result,
+                sentBody: body
+            });
+        }
     } catch (error: unknown) {
         const err = error as Error;
         console.error('Proxy POST Error:', err);
+        const message = err.name === 'AbortError'
+            ? 'Google Script request timed out after 15 seconds'
+            : err.message || 'Failed to update Google Sheets';
         return NextResponse.json({
-            error: err.message || 'Failed to update Google Sheets'
+            error: message
         }, { status: 500 });
     }
 }

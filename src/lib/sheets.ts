@@ -76,10 +76,20 @@ export async function addStudent(student: Omit<Student, 'id'>): Promise<Student>
 
     const response = await fetch(API_URL, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
     });
 
-    if (!response.ok) throw new Error('Failed to add student');
+    const body = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        const serverMsg = body?.message || body?.error || '';
+        throw new Error(`Failed to add student (${response.status}): ${serverMsg}`);
+    }
+
+    if (body?.message && body.message !== 'Success') {
+        throw new Error(`Server error: ${body.message}`);
+    }
 
     return { ...student, id: new Date().toISOString() };
 }
@@ -100,6 +110,7 @@ export async function updateStudent(id: string, updates: Partial<Student>): Prom
     try {
         const response = await fetch(API_URL, {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 
@@ -128,6 +139,7 @@ export async function deleteStudent(id: string): Promise<boolean> {
 
     const response = await fetch(API_URL, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
     });
 
