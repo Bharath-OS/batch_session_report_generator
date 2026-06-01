@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { getStudents, Student, GroupNumber } from '@/lib/sheets';
 import { Button, Input, Select, Label, Textarea } from '@/components/FormElements';
 import Modal from '@/components/Modal';
+import Toast from '@/components/Toast';
 
 export default function StudentPage() {
   const [students, setStudents] = useState<Student[]>([]);
@@ -27,12 +28,18 @@ export default function StudentPage() {
   const [showModal, setShowModal] = useState(false);
   const [reportOutput, setReportOutput] = useState('');
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getStudents().then(data => {
-      setStudents(data);
-      setIsLoading(false);
-    });
+    getStudents()
+      .then(data => {
+        setStudents(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        setError(err.message || 'Failed to load students');
+        setIsLoading(false);
+      });
   }, []);
 
   // Filter students based on group
@@ -338,6 +345,15 @@ ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
           </Button>
         </div>
       </Modal>
+
+      {/* Toast Notification */}
+      {error && (
+        <Toast
+          message={error}
+          type="error"
+          onClose={() => setError(null)}
+        />
+      )}
     </div>
   );
 }
