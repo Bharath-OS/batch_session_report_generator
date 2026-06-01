@@ -4,22 +4,34 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input, Button, Label } from '@/components/FormElements';
 
-import { ADMIN_CONFIG } from '@/lib/config';
-
 export default function AdminLogin() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (email === ADMIN_CONFIG.email && password === ADMIN_CONFIG.password) {
-            // Very basic mock authentication using localStorage
-            localStorage.setItem('adminAuth', 'true');
-            router.push('/admin');
-        } else {
-            setError('Invalid email or password');
+        setIsLoading(true);
+        setError('');
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            if (res.ok) {
+                localStorage.setItem('adminAuth', 'true');
+                router.push('/admin');
+            } else {
+                const data = await res.json().catch(() => ({}));
+                setError(data.error || 'Invalid email or password');
+            }
+        } catch {
+            setError('Network error. Please try again.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -55,8 +67,8 @@ export default function AdminLogin() {
                             required
                         />
                     </div>
-                    <Button type="submit" className="w-full mt-2">
-                        Login
+                    <Button type="submit" disabled={isLoading} className="w-full mt-2">
+                        {isLoading ? 'Logging in…' : 'Login'}
                     </Button>
                 </form>
             </div>
