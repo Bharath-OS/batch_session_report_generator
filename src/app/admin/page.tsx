@@ -317,6 +317,7 @@ export default function AdminDashboard() {
     const [filterDomain, setFilterDomain] = useState<Domain | 'all'>('all');
     const [filterStatus, setFilterStatus] = useState<StudentStatus | 'all'>('all');
     const [filterBatch, setFilterBatch] = useState<string | 'all'>('all');
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         const auth = localStorage.getItem('adminAuth');
@@ -348,28 +349,35 @@ export default function AdminDashboard() {
         (filterGroup === 'all' || s.groupNumber === filterGroup) &&
         (filterDomain === 'all' || s.domain === filterDomain) &&
         (filterStatus === 'all' || s.status === filterStatus) &&
-        (filterBatch === 'all' || s.batch === filterBatch)
+        (filterBatch === 'all' || s.batch === filterBatch) &&
+        (searchTerm === '' || s.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
-    const hasFilters = filterGroup !== 'all' || filterDomain !== 'all' || filterStatus !== 'all' || filterBatch !== 'all';
-    const clearFilters = () => { setFilterGroup('all'); setFilterDomain('all'); setFilterStatus('all'); setFilterBatch('all'); };
+    const hasFilters = filterGroup !== 'all' || filterDomain !== 'all' || filterStatus !== 'all' || filterBatch !== 'all' || searchTerm !== '';
+    const clearFilters = () => { setFilterGroup('all'); setFilterDomain('all'); setFilterStatus('all'); setFilterBatch('all'); setSearchTerm(''); };
 
     const showToast = (msg: string, type: 'success' | 'danger' = 'success') => setToast({ msg, type });
 
     const handleSave = async (form: typeof emptyForm) => {
         setIsSaving(true);
-        if (editTarget) {
-            const updated = await updateStudent(editTarget.id, form);
-            if (updated) setStudents(prev => prev.map(s => s.id === editTarget.id ? updated : s));
-            showToast(`${form.name} has been updated`);
-        } else {
-            const added = await addStudent(form);
-            setStudents(prev => [...prev, added]);
-            showToast(`${form.name} is added to the list`);
+        try {
+            if (editTarget) {
+                const updated = await updateStudent(editTarget.id, form);
+                if (updated) setStudents(prev => prev.map(s => s.id === editTarget.id ? updated : s));
+                showToast(`${form.name} has been updated`);
+            } else {
+                const added = await addStudent(form);
+                setStudents(prev => [...prev, added]);
+                showToast(`${form.name} is added to the list`);
+            }
+            setFormOpen(false);
+            setEditTarget(null);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Unknown error';
+            showToast(msg, 'danger');
+        } finally {
+            setIsSaving(false);
         }
-        setIsSaving(false);
-        setFormOpen(false);
-        setEditTarget(null);
     };
 
     const handleDeleteConfirm = useCallback(async () => {
@@ -450,10 +458,13 @@ export default function AdminDashboard() {
 
                         <div className="flex-1" />
 
-                        {/* Count badge */}
-                        <span className="text-xs text-secondary bg-secondary-light px-3 py-1 rounded-full font-medium">
-                            {filtered.length} / {students.length}
-                        </span>
+                        {/* Search */}
+                        <input
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                            placeholder="Search by name…"
+                            className="input-field !py-1.5 !text-xs min-w-[300px] max-w-[400px]"
+                        />
 
                         {/* Add button */}
                         <button
@@ -462,6 +473,13 @@ export default function AdminDashboard() {
                         >
                             <PlusIcon /> Add Student
                         </button>
+                    </div>
+
+                    {/* Count badge row */}
+                    <div className="flex justify-end px-5 py-2 border-b border-secondary-light/70">
+                        <span className="text-xs text-secondary bg-secondary-light px-3 py-1 rounded-full font-medium">
+                            {filtered.length} / {students.length}
+                        </span>
                     </div>
 
                     {/* Table */}
