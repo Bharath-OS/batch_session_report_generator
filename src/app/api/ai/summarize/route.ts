@@ -1,6 +1,56 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GROQ_API_KEY, GROQ_MODEL } from '@/lib/config';
 
+// ── In-memory rate limiter (10 req/min per IP) ──────────────────────────
+const RATE_LIMIT = 10;
+const RATE_WINDOW_MS = 60_000;
+
+interface RateEntry {
+  count: number;
+  resetTime: number;
+}
+
+const rateMap = new Map<string, RateEntry>();
+
+function getClientIp(request: NextRequest): string {
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) return forwarded.split(',')[0].trim();
+  const realIp = request.headers.get('x-real-ip');
+  if (realIp) return realIp;
+  const cfIp = request.headers.get('cf-connecting-ip');
+  if (cfIp) return cfIp;
+  return '127.0.0.1';
+}
+
+function checkRateLimit(ip: string): { allowed: boolean; retryAfter?: number } {
+  const now = Date.now();
+  const entry = rateMap.get(ip);
+
+  if (!entry || now > entry.resetTime) {
+    rateMap.set(ip, { count: 1, resetTime: now + RATE_WINDOW_MS });
+    return { allowed: true };
+  }
+
+  if (entry.count >= RATE_LIMIT) {
+    const retryAfter = Math.ceil((entry.resetTime - now) / 1000);
+    return { allowed: false, retryAfter };
+  }
+
+  entry.count++;
+  return { allowed: true };
+}
+
+// Periodically sweep expired entries to prevent memory leaks
+if (typeof setInterval !== 'undefined') {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [ip, entry] of rateMap) {
+      if (now > entry.resetTime) rateMap.delete(ip);
+    }
+  }, 5 * 60_000);
+}
+
+// ── Prompt sanitization ────────────────────────────────────────────────
 function sanitizePrompt(text: string): string {
     return text
         .replace(/\p{Extended_Pictographic}/gu, '')
@@ -9,6 +59,7 @@ function sanitizePrompt(text: string): string {
         .trim();
 }
 
+// ── System instruction ──────────────────────────────────────────────────
 const SYSTEM_INSTRUCTION = `You are a session report summarizer for a coding academy. Your task is to generate a concise session summary based on the user's input.
 
 Rules:
@@ -29,6 +80,19 @@ export async function POST(request: NextRequest) {
 
         if (!GROQ_API_KEY) {
             return NextResponse.json({ error: 'Groq API key is not configured' }, { status: 500 });
+        }
+
+        // Rate limit check (per IP)
+        const ip = getClientIp(request);
+        const rateCheck = checkRateLimit(ip);
+        if (!rateCheck.allowed) {
+            return NextResponse.json(
+                { error: `You've reached the limit of ${RATE_LIMIT} AI generations per minute. Please wait ${rateCheck.retryAfter} seconds and try again.` },
+                {
+                    status: 429,
+                    headers: { 'Retry-After': String(rateCheck.retryAfter) },
+                }
+            );
         }
 
         const cleanPrompt = sanitizePrompt(prompt);
