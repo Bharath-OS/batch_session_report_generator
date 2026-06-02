@@ -66,7 +66,7 @@ const emptyForm = {
     status: 'Active' as StudentStatus,
 };
 
-const DOMAINS: Domain[] = ['Flutter', 'MERN', 'MEAN', 'Django', 'Data Science', 'Cyber Security', 'Java Spring Boot', 'Machine Learning', 'Game Development', 'DevOps'];
+const DOMAINS: Domain[] = ['Flutter', 'MERN', 'MEAN', 'Django', 'Data Science', 'Cyber Security', 'Java Spring Boot', 'Machine Learning', 'Game Development', 'DevOps', 'Golang'];
 const GROUPS: GroupNumber[] = ['1', '2', '3'];
 const STATUSES: StudentStatus[] = ['Active', 'N/A'];
 
