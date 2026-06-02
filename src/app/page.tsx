@@ -1,10 +1,51 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { getStudents, Student, GroupNumber } from '@/lib/sheets';
-import { Button, Input, Select, Label, Textarea } from '@/components/FormElements';
-import Modal from '@/components/Modal';
+import { Input, Select, Label, Textarea } from '@/components/FormElements';
 import Toast from '@/components/Toast';
+
+function buildReportText(params: {
+  selectedGroup: GroupNumber;
+  date: string;
+  trainer: string;
+  coordinators: string;
+  preparedBy: string;
+  overview: string;
+  presentStudents: Student[];
+  absentStudents: Student[];
+  naStudents: Student[];
+  tldvLink: string;
+}): string {
+  const { selectedGroup, date, trainer, coordinators, preparedBy, overview, presentStudents, absentStudents, naStudents, tldvLink } = params;
+
+  const presentList = [...presentStudents].sort((a, b) => a.name.localeCompare(b.name));
+  const absentList = [...absentStudents].sort((a, b) => a.name.localeCompare(b.name));
+  const naList = [...naStudents].sort((a, b) => a.name.localeCompare(b.name));
+
+  const [yyyy, mm, dd] = date.split('-');
+  const formattedDate = `${dd}-${mm}-${yyyy}`;
+
+  let text = `📘 *BCR 306 Session Report* 📘\n\n`;
+  text += `📌 *Group Number:* Group ${selectedGroup}\n`;
+  text += `📅 *Date:* ${formattedDate}\n`;
+  text += `👨‍🏫 *Trainer Name:* ${trainer || '___________'}\n`;
+  text += `🧑‍🤝‍🧑 *Coordinators:* ${coordinators || '___________'}\n`;
+  text += `✍️ *Prepared By:* ${preparedBy || '___________'}\n\n`;
+  text += `📝 *Session Overview:*\n`;
+  text += `${overview || 'No session summary provided yet...'}\n\n`;
+  text += `───────────────\n`;
+  text += `✅ *Present:*\n`;
+  text += presentList.length > 0 ? presentList.map((s, i) => `${i + 1}. ${s.name}`).join('\n') : 'None';
+  text += `\n\n❌ *Absent:*\n`;
+  text += absentList.length > 0 ? absentList.map((s, i) => `${i + 1}. ${s.name}`).join('\n') : 'None';
+  text += `\n\n⚪ *N/A:*\n`;
+  text += naList.length > 0 ? naList.map((s, i) => `${i + 1}. ${s.name}`).join('\n') : 'None';
+  text += `\n───────────────\n`;
+  text += tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : '🔗 *TLDV Link:* ___';
+
+  return text;
+}
 
 export default function StudentPage() {
   const [students, setStudents] = useState<Student[]>([]);
@@ -18,16 +59,23 @@ export default function StudentPage() {
   const [trainer, setTrainer] = useState('');
   const [coordinators, setCoordinators] = useState('');
   const [preparedBy, setPreparedBy] = useState('');
-  const [overview, setOverview] = useState('');
+  const [aiPrompt, setAiPrompt] = useState('');
   const [tldvLink, setTldvLink] = useState('');
+
+  // AI summary
+  const [aiSummary, setAiSummary] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const lastGeneratedPrompt = useRef('');
 
   // Attendance
   const [presentIds, setPresentIds] = useState<Set<string>>(new Set());
+  const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
 
-  // Modal & Final Report Output
-  const [showModal, setShowModal] = useState(false);
-  const [reportOutput, setReportOutput] = useState('');
-  const [copied, setCopied] = useState(false);
+  // Toast
+  const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' | 'info' } | null>(null);
+
+  // Copy feedback
+  const [copiedPreview, setCopiedPreview] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -80,49 +128,51 @@ export default function StudentPage() {
     });
   };
 
-  const handleCreateReport = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const presentList = [...presentStudents].sort((a, b) => a.name.localeCompare(b.name));
-    const absentList = [...absentStudents].sort((a, b) => a.name.localeCompare(b.name));
-    const naList = [...naStudents].sort((a, b) => a.name.localeCompare(b.name));
-
-    const [yyyy, mm, dd] = date.split('-');
-    const formattedDate = `${dd}-${mm}-${yyyy}`;
-
-    const reportText = `📘 *BCR 306 Session Report* 📘
-
-📌 *Group Number:* Group ${selectedGroup}
-📅 *Date:* ${formattedDate}
-👨‍🏫 *Trainer Name:* ${trainer}
-🧑‍🤝‍🧑 *Coordinators:* ${coordinators}
-✍️ *Prepared By:* ${preparedBy}
-
-📝 *Session Overview:*
-${overview}
-
-───────────────
-✅ *Present:*
-${presentList.length > 0 ? presentList.map((s, i) => `${i + 1}. ${s.name}`).join('\n') : 'None'}
-
-❌ *Absent:*
-${absentList.length > 0 ? absentList.map((s, i) => `${i + 1}. ${s.name}`).join('\n') : 'None'}
-
-⚪ *N/A:*
-${naList.length > 0 ? naList.map((s, i) => `${i + 1}. ${s.name}`).join('\n') : 'None'}
-───────────────
-${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
-`;
-
-    setReportOutput(reportText);
-    setCopied(false);
-    setShowModal(true);
+  const handleGenerateSummary = async () => {
+    if (!aiPrompt.trim()) return;
+    if (aiPrompt.trim() === lastGeneratedPrompt.current) {
+      setToast({ msg: 'Prompt unchanged — already generated for this text.', type: 'info' });
+      return;
+    }
+    setIsGenerating(true);
+    setAiSummary('');
+    try {
+      const res = await fetch('/api/ai/summarize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: aiPrompt }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to generate summary');
+      lastGeneratedPrompt.current = aiPrompt.trim();
+      setAiSummary(data.summary);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to generate summary';
+      setToast({ msg, type: 'error' });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(reportOutput);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const overview = aiSummary;
+
+  const previewText = useMemo(() => buildReportText({
+    selectedGroup,
+    date,
+    trainer,
+    coordinators,
+    preparedBy,
+    overview,
+    presentStudents,
+    absentStudents,
+    naStudents,
+    tldvLink,
+  }), [selectedGroup, date, trainer, coordinators, preparedBy, overview, presentStudents, absentStudents, naStudents, tldvLink]);
+
+  const handleCopyPreview = () => {
+    navigator.clipboard.writeText(previewText);
+    setCopiedPreview(true);
+    setTimeout(() => setCopiedPreview(false), 2000);
   };
 
   if (isLoading) {
@@ -137,17 +187,16 @@ ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
   }
 
   return (
-    <div className="max-w-[800px] mx-auto space-y-6">
-      {/* Session Details Card */}
-      <div className="card-container">
-        <h2 className="text-lg font-bold text-foreground mb-5 flex items-center gap-2">
-          <span className="w-7 h-7 bg-primary-light text-primary rounded-lg flex items-center justify-center text-sm">📋</span>
-          Session Details
-        </h2>
+    <div className="flex flex-col lg:flex-row gap-6 items-start">
+      {/* ─── Sidebar: Session Details ─────────────────────────────────── */}
+      <div className="w-full lg:w-80 shrink-0">
+        <div className="card-container">
+          <h2 className="text-lg font-bold text-foreground mb-5 flex items-center gap-2">
+            <span className="w-7 h-7 bg-primary-light text-primary rounded-lg flex items-center justify-center text-sm">📋</span>
+            Session Details
+          </h2>
 
-        <form id="report-form" onSubmit={handleCreateReport} className="space-y-4">
-          {/* Group + Date row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-4">
             <div>
               <Label>Select Group</Label>
               <Select
@@ -160,7 +209,6 @@ ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
               </Select>
             </div>
 
-            {/* Modern Date Picker */}
             <div>
               <Label>Date</Label>
               <div className="relative">
@@ -181,10 +229,7 @@ ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
                 />
               </div>
             </div>
-          </div>
 
-          {/* Trainer + Coordinators */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label>Trainer Name</Label>
               <Input
@@ -194,6 +239,7 @@ ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
                 placeholder="e.g. John Doe"
               />
             </div>
+
             <div>
               <Label>Coordinators</Label>
               <Input
@@ -203,150 +249,187 @@ ${tldvLink ? `🔗 *TLDV Link:* ${tldvLink}` : ''}
                 placeholder="e.g. Jane Smith"
               />
             </div>
-          </div>
 
-          <div>
-            <Label>Prepared By</Label>
-            <Input
-              value={preparedBy}
-              onChange={e => setPreparedBy(e.target.value)}
-              required
-              placeholder="Your Name"
-            />
-          </div>
+            <div>
+              <Label>Prepared By</Label>
+              <Input
+                value={preparedBy}
+                onChange={e => setPreparedBy(e.target.value)}
+                required
+                placeholder="Your Name"
+              />
+            </div>
 
-          <div>
-            <Label>Session Overview</Label>
-            <Textarea
-              value={overview}
-              onChange={e => setOverview(e.target.value)}
-              required
-              placeholder="Brief summary of what was covered…"
-            />
-          </div>
+            <div>
+              <Label>Session Summary Prompt</Label>
+              <Textarea
+                value={aiPrompt}
+                onChange={e => { setAiPrompt(e.target.value); setAiSummary(''); }}
+                placeholder="Provide a brief summary or bullet points about what was covered in today's session. The AI will use this to generate a well-written session overview for the report."
+                rows={4}
+              />
+            </div>
 
-          <div>
-            <Label>TLDV Recording Link</Label>
-            <Input
-              type="url"
-              value={tldvLink}
-              required
-              onChange={e => setTldvLink(e.target.value)}
-              placeholder="https://tldv.io/…"
-            />
-          </div>
-        </form>
-      </div>
-
-      {/* Attendance Card */}
-      <div className="card-container">
-        <div className="flex justify-between items-center mb-2">
-          <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-            <span className="w-7 h-7 bg-primary-light text-primary rounded-lg flex items-center justify-center text-sm">✅</span>
-            Attendance
-          </h2>
-          <button type="button" onClick={handleInvert} className="btn-secondary text-xs px-3 py-1.5 flex items-center gap-1.5">
-            {/* Swap / invert icon */}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="17 1 21 5 17 9" />
-              <path d="M3 11V9a4 4 0 0 1 4-4h14" />
-              <polyline points="7 23 3 19 7 15" />
-              <path d="M21 13v2a4 4 0 0 1-4 4H3" />
-            </svg>
-            Invert
-          </button>
-        </div>
-        <p className="text-xs text-secondary mb-4">Click a name to toggle between Present and Absent.</p>
-
-        {/* Two-column attendance grid — fixed height with scroll */}
-        <div className="grid grid-cols-2 gap-4">
-          {/* Present Column */}
-          <div className="bg-success-light/30 border border-success-light rounded-xl p-3 flex flex-col">
-            <h3 className="font-semibold text-success-dark mb-3 flex items-center justify-between text-sm shrink-0">
-              <span>✅ Present</span>
-              <span className="text-xs bg-success-light text-success-dark px-2 py-0.5 rounded-full font-bold">{presentStudents.length}</span>
-            </h3>
-            <ul className="space-y-1.5 overflow-y-auto max-h-56 pr-1 custom-scroll">
-              {presentStudents.map(student => (
-                <li
-                  key={student.id}
-                  onClick={() => toggleAttendance(student.id)}
-                  className="cursor-pointer bg-white px-3 py-2 rounded-lg text-sm text-foreground shadow-sm hover:shadow-md border border-transparent hover:border-success-light transition-all select-none truncate"
-                  title={student.name}
-                >
-                  {student.name}
-                </li>
-              ))}
-              {presentStudents.length === 0 && (
-                <li className="text-xs text-secondary text-center py-6 italic">No one marked present</li>
+            <button
+              type="button"
+              onClick={handleGenerateSummary}
+              disabled={isGenerating || !aiPrompt.trim()}
+              className="btn-primary w-full text-sm py-2.5 flex items-center justify-center gap-2"
+            >
+              {isGenerating ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Generating…
+                </>
+              ) : (
+                'Generate Session Summary'
               )}
-            </ul>
-          </div>
+            </button>
 
-          {/* Absent Column */}
-          <div className="bg-danger-light/30 border border-danger-light rounded-xl p-3 flex flex-col">
-            <h3 className="font-semibold text-danger-dark mb-3 flex items-center justify-between text-sm shrink-0">
-              <span>❌ Absent</span>
-              <span className="text-xs bg-danger-light text-danger-dark px-2 py-0.5 rounded-full font-bold">{absentStudents.length}</span>
-            </h3>
-            <ul className="space-y-1.5 overflow-y-auto max-h-56 pr-1 custom-scroll">
-              {absentStudents.map(student => (
-                <li
-                  key={student.id}
-                  onClick={() => toggleAttendance(student.id)}
-                  className={`cursor-pointer bg-white px-3 py-2 rounded-lg text-sm text-foreground shadow-sm hover:shadow-md border border-transparent hover:border-danger-light transition-all select-none truncate`}
-                  title={student.name}
-                >
-                  {student.name}
-                </li>
-              ))}
-              {absentStudents.length === 0 && (
-                <li className="text-xs text-secondary text-center py-6 italic">No one absent</li>
-              )}
-            </ul>
-          </div>
-        </div>
-
-        {/* N/A Section */}
-        {naStudents.length > 0 && (
-          <div className="mt-4 bg-secondary-light/30 rounded-xl p-3 border border-secondary-light">
-            <h3 className="font-semibold text-secondary-dark mb-2 text-xs uppercase tracking-wider">N/A — Not Active</h3>
-            <div className="flex flex-wrap gap-2">
-              {naStudents.map(student => (
-                <span key={student.id} className="text-xs bg-white text-secondary-dark px-2.5 py-1 rounded-lg border border-secondary-light shadow-sm">
-                  {student.name}
-                </span>
-              ))}
+            <div>
+              <Label>TLDV Recording Link</Label>
+              <Input
+                type="url"
+                value={tldvLink}
+                onChange={e => setTldvLink(e.target.value)}
+                placeholder="https://tldv.io/…"
+              />
             </div>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Generate Button */}
-      <button type="submit" form="report-form" className="btn-primary w-full text-base py-3.5 rounded-xl">
-        Create Report ✨
-      </button>
-
-      {/* Report Modal */}
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Session Report Ready">
-        <div className="space-y-4">
-          <p className="text-sm text-secondary-dark text-center">
-            Review your formatted report below and click Copy to send it in WhatsApp.
-          </p>
-          <div className="bg-secondary-light/30 rounded-xl p-4 border border-secondary-light max-h-[50vh] overflow-y-auto whitespace-pre-wrap font-sans text-sm text-foreground leading-relaxed">
-            {reportOutput}
+      {/* ─── Main Content ──────────────────────────────────────────────── */}
+      <div className="flex-1 min-w-0 space-y-6">
+        {/* ── Preview ──────────────────────────────────────────── */}
+        <div className="card-container">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+              <span className="w-7 h-7 bg-primary-light text-primary rounded-lg flex items-center justify-center text-sm">👁️</span>
+              Report Preview
+            </h2>
+            <button
+              type="button"
+              onClick={handleCopyPreview}
+              className={`text-sm px-4 py-2 rounded-lg font-semibold transition-all ${copiedPreview ? 'bg-success-light text-success-dark' : 'bg-primary text-white hover:bg-primary-dark shadow-sm'}`}
+            >
+              {copiedPreview ? 'Copied!' : 'Copy Report'}
+            </button>
           </div>
-          <Button
-            className="w-full relative whitespace-pre flex justify-center items-center gap-2"
-            onClick={handleCopy}
-            variant={copied ? 'secondary' : 'primary'}
-          >
-            {copied ? '✅  Copied to Clipboard!' : '📋  Copy Report to Clipboard'}
-          </Button>
+          <div className="bg-secondary-light/30 rounded-xl p-4 border border-secondary-light max-h-[50vh] overflow-y-auto whitespace-pre-wrap font-sans text-sm text-foreground leading-relaxed">
+            {previewText}
+          </div>
         </div>
-      </Modal>
 
-      {/* Toast Notification */}
+        {/* ── Attendance (Accordion) ────────────────────────────── */}
+        <div className="card-container">
+          <button
+            type="button"
+            onClick={() => setIsAttendanceOpen(o => !o)}
+            className="w-full flex justify-between items-center mb-2"
+          >
+            <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+              <span className="w-7 h-7 bg-primary-light text-primary rounded-lg flex items-center justify-center text-sm">✅</span>
+              Attendance
+            </h2>
+            <div className="flex items-center gap-3">
+              {!isAttendanceOpen && (
+                <span className="text-xs text-secondary bg-secondary-light px-2.5 py-1 rounded-full font-medium">
+                  {presentStudents.length} present / {absentStudents.length} absent
+                </span>
+              )}
+              <svg
+                width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                strokeLinecap="round" strokeLinejoin="round"
+                className={`text-secondary transition-transform duration-200 ${isAttendanceOpen ? 'rotate-180' : ''}`}
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+          </button>
+
+          {isAttendanceOpen && (
+            <div className="overflow-hidden">
+              <p className="text-xs text-secondary mb-4">Click a name to toggle between Present and Absent.</p>
+
+              <div className="flex items-center gap-2 mb-4">
+                <button type="button" onClick={handleInvert} className="btn-secondary text-xs px-3 py-1.5 flex items-center gap-1.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="17 1 21 5 17 9" />
+                    <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                    <polyline points="7 23 3 19 7 15" />
+                    <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+                  </svg>
+                  Invert
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-success-light/30 border border-success-light rounded-xl p-3 flex flex-col">
+                  <h3 className="font-semibold text-success-dark mb-3 flex items-center justify-between text-sm shrink-0">
+                    <span>✅ Present</span>
+                    <span className="text-xs bg-success-light text-success-dark px-2 py-0.5 rounded-full font-bold">{presentStudents.length}</span>
+                  </h3>
+                  <ul className="space-y-1.5 overflow-y-auto max-h-56 pr-1 custom-scroll">
+                    {presentStudents.map(student => (
+                      <li
+                        key={student.id}
+                        onClick={() => toggleAttendance(student.id)}
+                        className="cursor-pointer bg-white px-3 py-2 rounded-lg text-sm text-foreground shadow-sm hover:shadow-md border border-transparent hover:border-success-light transition-all select-none truncate"
+                        title={student.name}
+                      >
+                        {student.name}
+                      </li>
+                    ))}
+                    {presentStudents.length === 0 && (
+                      <li className="text-xs text-secondary text-center py-6 italic">No one marked present</li>
+                    )}
+                  </ul>
+                </div>
+
+                <div className="bg-danger-light/30 border border-danger-light rounded-xl p-3 flex flex-col">
+                  <h3 className="font-semibold text-danger-dark mb-3 flex items-center justify-between text-sm shrink-0">
+                    <span>❌ Absent</span>
+                    <span className="text-xs bg-danger-light text-danger-dark px-2 py-0.5 rounded-full font-bold">{absentStudents.length}</span>
+                  </h3>
+                  <ul className="space-y-1.5 overflow-y-auto max-h-56 pr-1 custom-scroll">
+                    {absentStudents.map(student => (
+                      <li
+                        key={student.id}
+                        onClick={() => toggleAttendance(student.id)}
+                        className={`cursor-pointer bg-white px-3 py-2 rounded-lg text-sm text-foreground shadow-sm hover:shadow-md border border-transparent hover:border-danger-light transition-all select-none truncate`}
+                        title={student.name}
+                      >
+                        {student.name}
+                      </li>
+                    ))}
+                    {absentStudents.length === 0 && (
+                      <li className="text-xs text-secondary text-center py-6 italic">No one absent</li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+
+              {naStudents.length > 0 && (
+                <div className="mt-4 bg-secondary-light/30 rounded-xl p-3 border border-secondary-light">
+                  <h3 className="font-semibold text-secondary-dark mb-2 text-xs uppercase tracking-wider">N/A — Not Active</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {naStudents.map(student => (
+                      <span key={student.id} className="text-xs bg-white text-secondary-dark px-2.5 py-1 rounded-lg border border-secondary-light shadow-sm">
+                        {student.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+      </div>
+
+      {toast && <Toast key={toast.msg + Date.now()} message={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
+
       {error && (
         <Toast
           message={error}
