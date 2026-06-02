@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { getStudents, Student, GroupNumber } from '@/lib/sheets';
-import { Button, Input, Select, Label, Textarea } from '@/components/FormElements';
-import Modal from '@/components/Modal';
+import { Input, Select, Label, Textarea } from '@/components/FormElements';
 import Toast from '@/components/Toast';
 
 function buildReportText(params: {
@@ -74,10 +73,8 @@ export default function StudentPage() {
   // Toast
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' | 'info' } | null>(null);
 
-  // Modal & Final Report Output
-  const [showModal, setShowModal] = useState(false);
-  const [reportOutput, setReportOutput] = useState('');
-  const [copied, setCopied] = useState(false);
+  // Copy feedback
+  const [copiedPreview, setCopiedPreview] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -151,7 +148,7 @@ export default function StudentPage() {
     }
   };
 
-  const overview = aiSummary || aiPrompt;
+  const overview = aiSummary;
 
   const previewText = useMemo(() => buildReportText({
     selectedGroup,
@@ -166,16 +163,10 @@ export default function StudentPage() {
     tldvLink,
   }), [selectedGroup, date, trainer, coordinators, preparedBy, overview, presentStudents, absentStudents, naStudents, tldvLink]);
 
-  const handleCreateReport = () => {
-    setReportOutput(previewText);
-    setCopied(false);
-    setShowModal(true);
-  };
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(reportOutput);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopyPreview = () => {
+    navigator.clipboard.writeText(previewText);
+    setCopiedPreview(true);
+    setTimeout(() => setCopiedPreview(false), 2000);
   };
 
   if (isLoading) {
@@ -306,10 +297,19 @@ export default function StudentPage() {
       <div className="flex-1 min-w-0 space-y-6">
         {/* ── Preview ──────────────────────────────────────────── */}
         <div className="card-container">
-          <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-            <span className="w-7 h-7 bg-primary-light text-primary rounded-lg flex items-center justify-center text-sm">👁️</span>
-            Report Preview
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+              <span className="w-7 h-7 bg-primary-light text-primary rounded-lg flex items-center justify-center text-sm">👁️</span>
+              Report Preview
+            </h2>
+            <button
+              type="button"
+              onClick={handleCopyPreview}
+              className={`text-xs px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5 transition-all ${copiedPreview ? 'bg-success-light text-success-dark' : 'bg-primary-light text-primary hover:bg-primary hover:text-white'}`}
+            >
+              {copiedPreview ? '✅ Copied!' : '📋 Copy Report'}
+            </button>
+          </div>
           <div className="bg-secondary-light/30 rounded-xl p-4 border border-secondary-light max-h-[50vh] overflow-y-auto whitespace-pre-wrap font-sans text-sm text-foreground leading-relaxed">
             {previewText}
           </div>
@@ -420,33 +420,7 @@ export default function StudentPage() {
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={handleCreateReport}
-          className="btn-primary w-full text-base py-3.5 rounded-xl"
-        >
-          Create Report ✨
-        </button>
       </div>
-
-      {/* Report Modal */}
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Session Report Ready">
-        <div className="space-y-4">
-          <p className="text-sm text-secondary-dark text-center">
-            Review your formatted report below and click Copy to send it in WhatsApp.
-          </p>
-          <div className="bg-secondary-light/30 rounded-xl p-4 border border-secondary-light max-h-[50vh] overflow-y-auto whitespace-pre-wrap font-sans text-sm text-foreground leading-relaxed">
-            {reportOutput}
-          </div>
-          <Button
-            className="w-full relative whitespace-pre flex justify-center items-center gap-2"
-            onClick={handleCopy}
-            variant={copied ? 'secondary' : 'primary'}
-          >
-            {copied ? '✅  Copied to Clipboard!' : '📋  Copy Report to Clipboard'}
-          </Button>
-        </div>
-      </Modal>
 
       {toast && <Toast key={toast.msg + Date.now()} message={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
 
