@@ -305,9 +305,9 @@ export default function StudentPage() {
             <button
               type="button"
               onClick={handleCopyPreview}
-              className={`text-xs px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5 transition-all ${copiedPreview ? 'bg-success-light text-success-dark' : 'bg-primary-light text-primary hover:bg-primary hover:text-white'}`}
+              className={`text-sm px-4 py-2 rounded-lg font-semibold transition-all ${copiedPreview ? 'bg-success-light text-success-dark' : 'bg-primary text-white hover:bg-primary-dark shadow-sm'}`}
             >
-              {copiedPreview ? '✅ Copied!' : '📋 Copy Report'}
+              {copiedPreview ? 'Copied!' : 'Copy Report'}
             </button>
           </div>
           <div className="bg-secondary-light/30 rounded-xl p-4 border border-secondary-light max-h-[50vh] overflow-y-auto whitespace-pre-wrap font-sans text-sm text-foreground leading-relaxed">
