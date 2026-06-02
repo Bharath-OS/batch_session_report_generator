@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { getStudents, Student, GroupNumber } from '@/lib/sheets';
 import { Input, Select, Label, Textarea } from '@/components/FormElements';
 import Toast from '@/components/Toast';
@@ -65,6 +65,7 @@ export default function StudentPage() {
   // AI summary
   const [aiSummary, setAiSummary] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const lastGeneratedPrompt = useRef('');
 
   // Attendance
   const [presentIds, setPresentIds] = useState<Set<string>>(new Set());
@@ -129,6 +130,10 @@ export default function StudentPage() {
 
   const handleGenerateSummary = async () => {
     if (!aiPrompt.trim()) return;
+    if (aiPrompt.trim() === lastGeneratedPrompt.current) {
+      setToast({ msg: 'Prompt unchanged — already generated for this text.', type: 'info' });
+      return;
+    }
     setIsGenerating(true);
     setAiSummary('');
     try {
@@ -139,6 +144,7 @@ export default function StudentPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to generate summary');
+      lastGeneratedPrompt.current = aiPrompt.trim();
       setAiSummary(data.summary);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Failed to generate summary';
