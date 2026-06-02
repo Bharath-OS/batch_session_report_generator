@@ -74,8 +74,9 @@ export default function StudentPage() {
   // Toast
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' | 'info' } | null>(null);
 
-  // Copy feedback
+  // Copy feedback + field validation
   const [copiedPreview, setCopiedPreview] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -114,6 +115,7 @@ export default function StudentPage() {
       }
       return next;
     });
+    setFieldErrors(prev => { const next = new Set(prev); next.delete('attendance'); return next; });
   };
 
   const handleInvert = () => {
@@ -170,6 +172,17 @@ export default function StudentPage() {
   }), [selectedGroup, date, trainer, coordinators, preparedBy, overview, presentStudents, absentStudents, naStudents, tldvLink]);
 
   const handleCopyPreview = () => {
+    const missing = new Set<string>();
+    if (!trainer.trim()) missing.add('trainer');
+    if (!coordinators.trim()) missing.add('coordinators');
+    if (!preparedBy.trim()) missing.add('preparedBy');
+    if (!aiSummary.trim()) missing.add('aiSummary');
+    if (presentStudents.length === 0) missing.add('attendance');
+    if (missing.size > 0) {
+      setFieldErrors(missing);
+      return;
+    }
+    setFieldErrors(new Set());
     navigator.clipboard.writeText(previewText);
     setCopiedPreview(true);
     setTimeout(() => setCopiedPreview(false), 2000);
@@ -234,37 +247,43 @@ export default function StudentPage() {
               <Label>Trainer Name</Label>
               <Input
                 value={trainer}
-                onChange={e => setTrainer(e.target.value)}
+                onChange={e => { setTrainer(e.target.value); setFieldErrors(prev => { const next = new Set(prev); next.delete('trainer'); return next; }); }}
                 required
                 placeholder="e.g. John Doe"
+                className={fieldErrors.has('trainer') ? 'border-red-400 ring-red-200' : ''}
               />
+              {fieldErrors.has('trainer') && <p className="text-xs text-red-500 mt-1">Trainer name is required</p>}
             </div>
 
             <div>
               <Label>Coordinators</Label>
               <Input
                 value={coordinators}
-                onChange={e => setCoordinators(e.target.value)}
+                onChange={e => { setCoordinators(e.target.value); setFieldErrors(prev => { const next = new Set(prev); next.delete('coordinators'); return next; }); }}
                 required
                 placeholder="e.g. Jane Smith"
+                className={fieldErrors.has('coordinators') ? 'border-red-400 ring-red-200' : ''}
               />
+              {fieldErrors.has('coordinators') && <p className="text-xs text-red-500 mt-1">Coordinators are required</p>}
             </div>
 
             <div>
               <Label>Prepared By</Label>
               <Input
                 value={preparedBy}
-                onChange={e => setPreparedBy(e.target.value)}
+                onChange={e => { setPreparedBy(e.target.value); setFieldErrors(prev => { const next = new Set(prev); next.delete('preparedBy'); return next; }); }}
                 required
                 placeholder="Your Name"
+                className={fieldErrors.has('preparedBy') ? 'border-red-400 ring-red-200' : ''}
               />
+              {fieldErrors.has('preparedBy') && <p className="text-xs text-red-500 mt-1">Prepared by is required</p>}
             </div>
 
             <div>
               <Label>Session Summary Prompt</Label>
               <Textarea
                 value={aiPrompt}
-                onChange={e => { setAiPrompt(e.target.value); setAiSummary(''); }}
+                onChange={e => { setAiPrompt(e.target.value); setAiSummary(''); setFieldErrors(prev => { const next = new Set(prev); next.delete('aiSummary'); return next; }); }}
                 placeholder="Provide a brief summary or bullet points about what was covered in today's session. The AI will use this to generate a well-written session overview for the report."
                 rows={4}
               />
@@ -272,7 +291,7 @@ export default function StudentPage() {
 
             <button
               type="button"
-              onClick={handleGenerateSummary}
+              onClick={() => { handleGenerateSummary(); setFieldErrors(prev => { const next = new Set(prev); next.delete('aiSummary'); return next; }); }}
               disabled={isGenerating || !aiPrompt.trim()}
               className="btn-primary w-full text-sm py-2.5 flex items-center justify-center gap-2"
             >
@@ -285,6 +304,7 @@ export default function StudentPage() {
                 'Generate Session Summary'
               )}
             </button>
+            {fieldErrors.has('aiSummary') && <p className="text-xs text-red-500 mt-1">Generate a session summary first</p>}
 
             <div>
               <Label>TLDV Recording Link</Label>
@@ -322,7 +342,7 @@ export default function StudentPage() {
         </div>
 
         {/* ── Attendance (Accordion) ────────────────────────────── */}
-        <div className="card-container">
+        <div className={`card-container ${fieldErrors.has('attendance') ? 'border-red-400' : ''}`}>
           <button
             type="button"
             onClick={() => setIsAttendanceOpen(o => !o)}
@@ -338,6 +358,7 @@ export default function StudentPage() {
                   {presentStudents.length} present / {absentStudents.length} absent
                 </span>
               )}
+              {fieldErrors.has('attendance') && <span className="text-xs text-red-500 font-medium">Required</span>}
               <svg
                 width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
                 strokeLinecap="round" strokeLinejoin="round"
