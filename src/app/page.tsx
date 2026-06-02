@@ -170,6 +170,16 @@ export default function StudentPage() {
   }), [selectedGroup, date, trainer, coordinators, preparedBy, overview, presentStudents, absentStudents, naStudents, tldvLink]);
 
   const handleCopyPreview = () => {
+    const missing: string[] = [];
+    if (!trainer.trim()) missing.push('Trainer Name');
+    if (!coordinators.trim()) missing.push('Coordinators');
+    if (!preparedBy.trim()) missing.push('Prepared By');
+    if (!aiSummary.trim()) missing.push('Session Summary (generate one first)');
+    if (presentStudents.length === 0) missing.push('Attendance (mark at least one present)');
+    if (missing.length > 0) {
+      setToast({ msg: `Fill in required fields: ${missing.join(', ')}`, type: 'error' });
+      return;
+    }
     navigator.clipboard.writeText(previewText);
     setCopiedPreview(true);
     setTimeout(() => setCopiedPreview(false), 2000);
