@@ -71,6 +71,9 @@ export default function StudentPage() {
   const [presentIds, setPresentIds] = useState<Set<string>>(new Set());
   const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
 
+  // Toast
+  const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' | 'info' } | null>(null);
+
   // Modal & Final Report Output
   const [showModal, setShowModal] = useState(false);
   const [reportOutput, setReportOutput] = useState('');
@@ -130,9 +133,22 @@ export default function StudentPage() {
   const handleGenerateSummary = async () => {
     if (!aiPrompt.trim()) return;
     setIsGenerating(true);
-    await new Promise(r => setTimeout(r, 1000));
-    setAiSummary('AI summary will appear here once the API is connected.');
-    setIsGenerating(false);
+    setAiSummary('');
+    try {
+      const res = await fetch('/api/ai/summarize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: aiPrompt }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to generate summary');
+      setAiSummary(data.summary);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to generate summary';
+      setToast({ msg, type: 'error' });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const overview = aiSummary || aiPrompt;
@@ -431,6 +447,8 @@ export default function StudentPage() {
           </Button>
         </div>
       </Modal>
+
+      {toast && <Toast key={toast.msg + Date.now()} message={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
 
       {error && (
         <Toast
